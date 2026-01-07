@@ -183,7 +183,8 @@ public class SameEnum2InterfaceServiceAdapterTest
         
 			Enum2 receivedprop2 = data.getParcelable("prop2", Enum2Parcelable.class).getEnum2();
         
-    // all structs (even from other modules) are known at compile time (see gradle files) and share same PathClassLoader, any class loader provides access to it.
+    // all structs, even from other modules, are known at compile time (see gradle files) and share the same PathClassLoader,
+    // therefore, any class loader provide access to the same PathClassLoader.
         data.setClassLoader(Enum1Parcelable.class.getClassLoader());
         assertEquals(receivedprop1, initprop1);
         assertEquals(receivedprop2, initprop2);
@@ -326,7 +327,8 @@ public class SameEnum2InterfaceServiceAdapterTest
         assertEquals(SameEnum2InterfaceMessageType.SIG_Sig2.getValue(), response.what);
         Bundle data = response.getData();
         
-    // all structs (even from other modules) are known at compile time (see gradle files) and share same PathClassLoader, any class loader provides access to it.
+    // all structs, even from other modules, are known at compile time (see gradle files) and share the same PathClassLoader,
+    // therefore, any class loader provide access to the same PathClassLoader.
         data.setClassLoader(Enum1Parcelable.class.getClassLoader());
         
 			Enum1 receivedparam1 = data.getParcelable("param1", Enum1Parcelable.class).getEnum1();
