@@ -38,6 +38,7 @@ public abstract class SameStruct1InterfaceBaseServiceLifecycleController
 
     public ISameStruct1Interface start(Context context)
     {
+        Log.i(getTag(), "SameStruct1InterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

@@ -54,7 +54,7 @@ public class StructArrayInterfaceServiceProvider extends HandlerThread implement
 		if (m_Service == null)
 		{
 			m_Service = new StructArrayInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new StructArrayInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new StructArrayInterfaceService");
 		}
 
 		return m_Service;

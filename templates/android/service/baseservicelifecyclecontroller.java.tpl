@@ -38,6 +38,7 @@ public abstract class {{Camel .Interface.Name }}BaseServiceLifecycleController
 
     public I{{Camel .Interface.Name }} start(Context context)
     {
+        Log.i(getTag(), "{{Camel .Interface.Name }}BaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

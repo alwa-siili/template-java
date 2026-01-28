@@ -90,8 +90,8 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbSimple.tbSimple_android_service.SimpleArrayInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -103,7 +103,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, SimpleArrayInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -115,7 +115,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -184,7 +184,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + SimpleArrayInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (SimpleArrayInterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -392,6 +392,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -400,7 +401,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -409,6 +410,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -417,7 +419,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -426,6 +428,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -434,7 +437,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncInt32Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncInt32Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -443,6 +446,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -451,7 +455,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncInt64Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncInt64Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -460,6 +464,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -468,7 +473,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -477,6 +482,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -485,7 +491,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncFloat32Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncFloat32Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -494,6 +500,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -502,7 +509,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncFloat64Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncFloat64Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -511,6 +518,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -519,7 +527,7 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleArrayInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -889,13 +897,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    boolean[] result = bundle.getBooleanArray("result");
-            Log.v(TAG, "resolve funcBool" + result);
+            Log.i(TAG, "resolve funcBool" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -931,13 +944,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    int[] result = bundle.getIntArray("result");
-            Log.v(TAG, "resolve funcInt" + result);
+            Log.i(TAG, "resolve funcInt" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -973,13 +991,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    int[] result = bundle.getIntArray("result");
-            Log.v(TAG, "resolve funcInt32" + result);
+            Log.i(TAG, "resolve funcInt32" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1015,13 +1038,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    long[] result = bundle.getLongArray("result");
-            Log.v(TAG, "resolve funcInt64" + result);
+            Log.i(TAG, "resolve funcInt64" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1057,13 +1085,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    float[] result = bundle.getFloatArray("result");
-            Log.v(TAG, "resolve funcFloat" + result);
+            Log.i(TAG, "resolve funcFloat" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1099,13 +1132,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    float[] result = bundle.getFloatArray("result");
-            Log.v(TAG, "resolve funcFloat32" + result);
+            Log.i(TAG, "resolve funcFloat32" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1141,13 +1179,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    double[] result = bundle.getDoubleArray("result");
-            Log.v(TAG, "resolve funcFloat64" + result);
+            Log.i(TAG, "resolve funcFloat64" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1183,13 +1226,18 @@ public class SimpleArrayInterfaceClient extends AbstractSimpleArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    String[] result = bundle.getStringArray("result");
-            Log.v(TAG, "resolve funcString" + result);
+            Log.i(TAG, "resolve funcString" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

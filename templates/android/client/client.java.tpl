@@ -86,8 +86,8 @@ public class {{Camel .Interface.Name }}Client extends Abstract{{Camel .Interface
         Intent intent = new Intent();
         intent.setClassName(packageName, "{{camel .Module.Name}}.{{camel .Module.Name}}_android_service.{{Camel .Interface.Name }}ServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -99,7 +99,7 @@ public class {{Camel .Interface.Name }}Client extends Abstract{{Camel .Interface
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, {{Camel .Interface.Name}}MessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -111,7 +111,7 @@ public class {{Camel .Interface.Name }}Client extends Abstract{{Camel .Interface
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -182,7 +182,7 @@ public class {{Camel .Interface.Name }}Client extends Abstract{{Camel .Interface
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + {{Camel .Interface.Name}}MessageType.fromInteger(msg.what));
 
 		    switch ({{Camel .Interface.Name}}MessageType.fromInteger(msg.what))
 		    {
@@ -235,6 +235,7 @@ public class {{Camel .Interface.Name }}Client extends Abstract{{Camel .Interface
 					data.setClassLoader({{template "getParcelable" .Return }}.class.getClassLoader());
 					{{- end}}
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -243,7 +244,7 @@ public class {{Camel .Interface.Name }}Client extends Abstract{{Camel .Interface
                     }
                     else
                     {
-                        Log.v(TAG, "received {{$InterfaceName}}MessageType.RPC_{{Camel .Name}}Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received {{$InterfaceName}}MessageType.RPC_{{Camel .Name}}Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -349,17 +350,22 @@ public class {{Camel .Interface.Name }}Client extends Abstract{{Camel .Interface
         Consumer<Bundle> resolver = bundle -> {
         {{- if .Return.IsVoid }}
             future.complete(null);
-            Log.v(TAG, "resolve {{.Name }}");
+            Log.i(TAG, "resolve {{.Name }}");
         {{- else }}
             {{template "getResultFromBundle" . }}
-            Log.v(TAG, "resolve {{.Name }}" + result);
+            Log.i(TAG, "resolve {{.Name }}" + result);
             future.complete(result);
         {{- end }}
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }

@@ -38,6 +38,7 @@ public abstract class CounterBaseServiceLifecycleController
 
     public ICounter start(Context context)
     {
+        Log.i(getTag(), "CounterBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

@@ -93,8 +93,8 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbEnum.tbEnum_android_service.EnumInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -106,7 +106,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, EnumInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -118,7 +118,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -187,7 +187,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + EnumInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (EnumInterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -306,6 +306,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
 				    Bundle data = msg.getData();
 					data.setClassLoader(Enum0Parcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -314,7 +315,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
                     }
                     else
                     {
-                        Log.v(TAG, "received EnumInterfaceMessageType.RPC_Func0Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received EnumInterfaceMessageType.RPC_Func0Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -324,6 +325,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
 				    Bundle data = msg.getData();
 					data.setClassLoader(Enum1Parcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -332,7 +334,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
                     }
                     else
                     {
-                        Log.v(TAG, "received EnumInterfaceMessageType.RPC_Func1Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received EnumInterfaceMessageType.RPC_Func1Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -342,6 +344,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
 				    Bundle data = msg.getData();
 					data.setClassLoader(Enum2Parcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -350,7 +353,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
                     }
                     else
                     {
-                        Log.v(TAG, "received EnumInterfaceMessageType.RPC_Func2Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received EnumInterfaceMessageType.RPC_Func2Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -360,6 +363,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
 				    Bundle data = msg.getData();
 					data.setClassLoader(Enum3Parcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -368,7 +372,7 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
                     }
                     else
                     {
-                        Log.v(TAG, "received EnumInterfaceMessageType.RPC_Func3Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received EnumInterfaceMessageType.RPC_Func3Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -558,13 +562,18 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
         Consumer<Bundle> resolver = bundle -> {
             
 		    Enum0 result = bundle.getParcelable("result", Enum0Parcelable.class).getEnum0();
-            Log.v(TAG, "resolve func0" + result);
+            Log.i(TAG, "resolve func0" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -600,13 +609,18 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
         Consumer<Bundle> resolver = bundle -> {
             
 		    Enum1 result = bundle.getParcelable("result", Enum1Parcelable.class).getEnum1();
-            Log.v(TAG, "resolve func1" + result);
+            Log.i(TAG, "resolve func1" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -642,13 +656,18 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
         Consumer<Bundle> resolver = bundle -> {
             
 		    Enum2 result = bundle.getParcelable("result", Enum2Parcelable.class).getEnum2();
-            Log.v(TAG, "resolve func2" + result);
+            Log.i(TAG, "resolve func2" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -684,13 +703,18 @@ public class EnumInterfaceClient extends AbstractEnumInterface implements Servic
         Consumer<Bundle> resolver = bundle -> {
             
 		    Enum3 result = bundle.getParcelable("result", Enum3Parcelable.class).getEnum3();
-            Log.v(TAG, "resolve func3" + result);
+            Log.i(TAG, "resolve func3" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

@@ -54,7 +54,7 @@ public class EnumInterfaceServiceProvider extends HandlerThread implements IEnum
 		if (m_Service == null)
 		{
 			m_Service = new EnumInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new EnumInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new EnumInterfaceService");
 		}
 
 		return m_Service;

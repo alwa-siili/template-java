@@ -54,7 +54,7 @@ public class {{Camel .Interface.Name}}ServiceProvider extends HandlerThread impl
 		if (m_Service == null)
 		{
 			m_Service = new {{Camel .Interface.Name}}Service();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new {{Camel .Interface.Name}}Service");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new {{Camel .Interface.Name}}Service");
 		}
 
 		return m_Service;

@@ -54,7 +54,7 @@ public class NoSignalsInterfaceServiceProvider extends HandlerThread implements 
 		if (m_Service == null)
 		{
 			m_Service = new NoSignalsInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NoSignalsInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NoSignalsInterfaceService");
 		}
 
 		return m_Service;

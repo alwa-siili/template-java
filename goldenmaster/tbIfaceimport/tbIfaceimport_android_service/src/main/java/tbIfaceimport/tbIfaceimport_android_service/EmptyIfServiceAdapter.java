@@ -42,6 +42,18 @@ public class EmptyIfServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static IEmptyIf setService(IEmptyIfServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -51,14 +63,18 @@ public class EmptyIfServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(EmptyIf) called. For handler " + mHandler);
@@ -195,6 +211,7 @@ public class EmptyIfServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			EmptyIfMessageType messageType = EmptyIfMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			IEmptyIf backend;
 			synchronized (EmptyIfServiceAdapter.sBackendMutex)
 			{

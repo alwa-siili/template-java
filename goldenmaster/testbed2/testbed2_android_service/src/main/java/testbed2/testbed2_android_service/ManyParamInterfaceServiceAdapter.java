@@ -42,6 +42,18 @@ public class ManyParamInterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static IManyParamInterface setService(IManyParamInterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -51,14 +63,18 @@ public class ManyParamInterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(ManyParamInterface) called. For handler " + mHandler);
@@ -195,6 +211,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			ManyParamInterfaceMessageType messageType = ManyParamInterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			IManyParamInterface backend;
 			synchronized (ManyParamInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -258,9 +275,12 @@ public class ManyParamInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        int param1 = data.getInt("param1", 0);
 					int result =  backend.func1(param1);
+
+					Log.i(TAG, "Called func1 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ManyParamInterfaceMessageType.RPC_Func1Resp.getValue();
@@ -272,6 +292,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -286,11 +307,14 @@ public class ManyParamInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        int param1 = data.getInt("param1", 0);
 					
 			        int param2 = data.getInt("param2", 0);
 					int result =  backend.func2(param1, param2);
+
+					Log.i(TAG, "Called func2 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ManyParamInterfaceMessageType.RPC_Func2Resp.getValue();
@@ -302,6 +326,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -316,6 +341,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        int param1 = data.getInt("param1", 0);
 					
@@ -323,6 +349,8 @@ public class ManyParamInterfaceServiceAdapter extends Service
 					
 			        int param3 = data.getInt("param3", 0);
 					int result =  backend.func3(param1, param2, param3);
+
+					Log.i(TAG, "Called func3 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ManyParamInterfaceMessageType.RPC_Func3Resp.getValue();
@@ -334,6 +362,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -348,6 +377,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        int param1 = data.getInt("param1", 0);
 					
@@ -357,6 +387,8 @@ public class ManyParamInterfaceServiceAdapter extends Service
 					
 			        int param4 = data.getInt("param4", 0);
 					int result =  backend.func4(param1, param2, param3, param4);
+
+					Log.i(TAG, "Called func4 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ManyParamInterfaceMessageType.RPC_Func4Resp.getValue();
@@ -368,6 +400,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

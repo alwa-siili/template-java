@@ -83,8 +83,8 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbSimple.tbSimple_android_service.NoSignalsInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -96,7 +96,7 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, NoSignalsInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -108,7 +108,7 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -177,7 +177,7 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + NoSignalsInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (NoSignalsInterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -222,6 +222,7 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -230,7 +231,7 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
                     }
                     else
                     {
-                        Log.v(TAG, "received NoSignalsInterfaceMessageType.RPC_FuncVoidResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received NoSignalsInterfaceMessageType.RPC_FuncVoidResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -239,6 +240,7 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -247,7 +249,7 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
                     }
                     else
                     {
-                        Log.v(TAG, "received NoSignalsInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received NoSignalsInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -363,12 +365,17 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
         CompletableFuture<Void>  future = new CompletableFuture<>();
         Consumer<Bundle> resolver = bundle -> {
             future.complete(null);
-            Log.v(TAG, "resolve funcVoid");
+            Log.i(TAG, "resolve funcVoid");
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -404,13 +411,18 @@ public class NoSignalsInterfaceClient extends AbstractNoSignalsInterface impleme
         Consumer<Bundle> resolver = bundle -> {
             
 		    boolean result = bundle.getBoolean("result", false);
-            Log.v(TAG, "resolve funcBool" + result);
+            Log.i(TAG, "resolve funcBool" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

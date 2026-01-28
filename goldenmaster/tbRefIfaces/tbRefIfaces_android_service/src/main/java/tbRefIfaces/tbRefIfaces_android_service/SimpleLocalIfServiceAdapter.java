@@ -42,6 +42,18 @@ public class SimpleLocalIfServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static ISimpleLocalIf setService(ISimpleLocalIfServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -51,14 +63,18 @@ public class SimpleLocalIfServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(SimpleLocalIf) called. For handler " + mHandler);
@@ -195,6 +211,7 @@ public class SimpleLocalIfServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			SimpleLocalIfMessageType messageType = SimpleLocalIfMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			ISimpleLocalIf backend;
 			synchronized (SimpleLocalIfServiceAdapter.sBackendMutex)
 			{
@@ -234,9 +251,12 @@ public class SimpleLocalIfServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        int param = data.getInt("param", 0);
 					int result =  backend.intMethod(param);
+
+					Log.i(TAG, "Called intMethod with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleLocalIfMessageType.RPC_IntMethodResp.getValue();
@@ -248,6 +268,7 @@ public class SimpleLocalIfServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

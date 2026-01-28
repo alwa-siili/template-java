@@ -54,7 +54,7 @@ public class NestedStruct2InterfaceServiceProvider extends HandlerThread impleme
 		if (m_Service == null)
 		{
 			m_Service = new NestedStruct2InterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NestedStruct2InterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NestedStruct2InterfaceService");
 		}
 
 		return m_Service;

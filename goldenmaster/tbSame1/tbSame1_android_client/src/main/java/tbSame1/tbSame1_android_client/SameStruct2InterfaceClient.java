@@ -87,8 +87,8 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbSame1.tbSame1_android_service.SameStruct2InterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -100,7 +100,7 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, SameStruct2InterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -112,7 +112,7 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -181,7 +181,7 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + SameStruct2InterfaceMessageType.fromInteger(msg.what));
 
 		    switch (SameStruct2InterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -256,6 +256,7 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
 				    Bundle data = msg.getData();
 					data.setClassLoader(Struct1Parcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -264,7 +265,7 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SameStruct2InterfaceMessageType.RPC_Func1Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SameStruct2InterfaceMessageType.RPC_Func1Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -274,6 +275,7 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
 				    Bundle data = msg.getData();
 					data.setClassLoader(Struct1Parcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -282,7 +284,7 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received SameStruct2InterfaceMessageType.RPC_Func2Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SameStruct2InterfaceMessageType.RPC_Func2Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -404,13 +406,18 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    Struct1 result = bundle.getParcelable("result", Struct1Parcelable.class).getStruct1();
-            Log.v(TAG, "resolve func1" + result);
+            Log.i(TAG, "resolve func1" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -448,13 +455,18 @@ public class SameStruct2InterfaceClient extends AbstractSameStruct2Interface imp
         Consumer<Bundle> resolver = bundle -> {
             
 		    Struct1 result = bundle.getParcelable("result", Struct1Parcelable.class).getStruct1();
-            Log.v(TAG, "resolve func2" + result);
+            Log.i(TAG, "resolve func2" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

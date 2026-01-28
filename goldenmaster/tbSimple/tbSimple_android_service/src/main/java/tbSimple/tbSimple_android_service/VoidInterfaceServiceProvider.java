@@ -54,7 +54,7 @@ public class VoidInterfaceServiceProvider extends HandlerThread implements IVoid
 		if (m_Service == null)
 		{
 			m_Service = new VoidInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new VoidInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new VoidInterfaceService");
 		}
 
 		return m_Service;

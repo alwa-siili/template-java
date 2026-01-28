@@ -54,7 +54,7 @@ public class NoOperationsInterfaceServiceProvider extends HandlerThread implemen
 		if (m_Service == null)
 		{
 			m_Service = new NoOperationsInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NoOperationsInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NoOperationsInterfaceService");
 		}
 
 		return m_Service;

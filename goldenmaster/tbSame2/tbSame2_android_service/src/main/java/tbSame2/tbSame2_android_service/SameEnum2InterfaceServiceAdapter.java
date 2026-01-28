@@ -46,6 +46,18 @@ public class SameEnum2InterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static ISameEnum2Interface setService(ISameEnum2InterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -55,14 +67,18 @@ public class SameEnum2InterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(SameEnum2Interface) called. For handler " + mHandler);
@@ -199,6 +215,7 @@ public class SameEnum2InterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			SameEnum2InterfaceMessageType messageType = SameEnum2InterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			ISameEnum2Interface backend;
 			synchronized (SameEnum2InterfaceServiceAdapter.sBackendMutex)
 			{
@@ -249,9 +266,12 @@ public class SameEnum2InterfaceServiceAdapter extends Service
 					
         data.setClassLoader(Enum1Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        Enum1 param1 = data.getParcelable("param1", Enum1Parcelable.class).getEnum1();
 					Enum1 result =  backend.func1(param1);
+
+					Log.i(TAG, "Called func1 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SameEnum2InterfaceMessageType.RPC_Func1Resp.getValue();
@@ -263,6 +283,7 @@ public class SameEnum2InterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -280,11 +301,14 @@ public class SameEnum2InterfaceServiceAdapter extends Service
     // therefore, any class loader provide access to the same PathClassLoader.
         data.setClassLoader(Enum1Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        Enum1 param1 = data.getParcelable("param1", Enum1Parcelable.class).getEnum1();
 					
 			        Enum2 param2 = data.getParcelable("param2", Enum2Parcelable.class).getEnum2();
 					Enum1 result =  backend.func2(param1, param2);
+
+					Log.i(TAG, "Called func2 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SameEnum2InterfaceMessageType.RPC_Func2Resp.getValue();
@@ -296,6 +320,7 @@ public class SameEnum2InterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

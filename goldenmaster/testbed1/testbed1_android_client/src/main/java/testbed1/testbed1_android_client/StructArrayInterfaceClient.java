@@ -96,8 +96,8 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
         Intent intent = new Intent();
         intent.setClassName(packageName, "testbed1.testbed1_android_service.StructArrayInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -109,7 +109,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, StructArrayInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -121,7 +121,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -190,7 +190,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + StructArrayInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (StructArrayInterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -333,6 +333,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructBoolParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -341,7 +342,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received StructArrayInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructArrayInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -351,6 +352,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructIntParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -359,7 +361,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received StructArrayInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructArrayInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -369,6 +371,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructFloatParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -377,7 +380,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received StructArrayInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructArrayInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -387,6 +390,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructStringParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -395,7 +399,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received StructArrayInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructArrayInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -405,6 +409,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
 				    Bundle data = msg.getData();
 					data.setClassLoader(Enum0Parcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -413,7 +418,7 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
                     }
                     else
                     {
-                        Log.v(TAG, "received StructArrayInterfaceMessageType.RPC_FuncEnumResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructArrayInterfaceMessageType.RPC_FuncEnumResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -639,13 +644,18 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
             StructBool[] result =  StructBoolParcelable.unwrapArray((StructBoolParcelable[])bundle.getParcelableArray("result", StructBoolParcelable.class));
-            Log.v(TAG, "resolve funcBool" + result);
+            Log.i(TAG, "resolve funcBool" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -681,13 +691,18 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
             StructInt[] result =  StructIntParcelable.unwrapArray((StructIntParcelable[])bundle.getParcelableArray("result", StructIntParcelable.class));
-            Log.v(TAG, "resolve funcInt" + result);
+            Log.i(TAG, "resolve funcInt" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -723,13 +738,18 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
             StructFloat[] result =  StructFloatParcelable.unwrapArray((StructFloatParcelable[])bundle.getParcelableArray("result", StructFloatParcelable.class));
-            Log.v(TAG, "resolve funcFloat" + result);
+            Log.i(TAG, "resolve funcFloat" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -765,13 +785,18 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
             StructString[] result =  StructStringParcelable.unwrapArray((StructStringParcelable[])bundle.getParcelableArray("result", StructStringParcelable.class));
-            Log.v(TAG, "resolve funcString" + result);
+            Log.i(TAG, "resolve funcString" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -807,13 +832,18 @@ public class StructArrayInterfaceClient extends AbstractStructArrayInterface imp
         Consumer<Bundle> resolver = bundle -> {
             
             Enum0[] result =  Enum0Parcelable.unwrapArray((Enum0Parcelable[])bundle.getParcelableArray("result", Enum0Parcelable.class));
-            Log.v(TAG, "resolve funcEnum" + result);
+            Log.i(TAG, "resolve funcEnum" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

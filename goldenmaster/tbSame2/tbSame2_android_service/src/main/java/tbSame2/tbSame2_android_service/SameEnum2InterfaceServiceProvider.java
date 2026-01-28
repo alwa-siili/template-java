@@ -54,7 +54,7 @@ public class SameEnum2InterfaceServiceProvider extends HandlerThread implements 
 		if (m_Service == null)
 		{
 			m_Service = new SameEnum2InterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SameEnum2InterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SameEnum2InterfaceService");
 		}
 
 		return m_Service;

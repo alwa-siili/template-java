@@ -38,6 +38,7 @@ public abstract class SimpleLocalIfBaseServiceLifecycleController
 
     public ISimpleLocalIf start(Context context)
     {
+        Log.i(getTag(), "SimpleLocalIfBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

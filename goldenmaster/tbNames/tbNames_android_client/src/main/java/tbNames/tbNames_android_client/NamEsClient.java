@@ -87,8 +87,8 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbNames.tbNames_android_service.NamEsServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -100,7 +100,7 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, NamEsMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -112,7 +112,7 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -181,7 +181,7 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + NamEsMessageType.fromInteger(msg.what));
 
 		    switch (NamEsMessageType.fromInteger(msg.what))
 		    {
@@ -272,6 +272,7 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -280,7 +281,7 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
                     }
                     else
                     {
-                        Log.v(TAG, "received NamEsMessageType.RPC_SomeFunctionResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received NamEsMessageType.RPC_SomeFunctionResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -289,6 +290,7 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -297,7 +299,7 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
                     }
                     else
                     {
-                        Log.v(TAG, "received NamEsMessageType.RPC_SomeFunction2Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received NamEsMessageType.RPC_SomeFunction2Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -487,12 +489,17 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
         CompletableFuture<Void>  future = new CompletableFuture<>();
         Consumer<Bundle> resolver = bundle -> {
             future.complete(null);
-            Log.v(TAG, "resolve SOME_FUNCTION");
+            Log.i(TAG, "resolve SOME_FUNCTION");
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -528,12 +535,17 @@ public class NamEsClient extends AbstractNamEs implements ServiceConnection
         CompletableFuture<Void>  future = new CompletableFuture<>();
         Consumer<Bundle> resolver = bundle -> {
             future.complete(null);
-            Log.v(TAG, "resolve Some_Function2");
+            Log.i(TAG, "resolve Some_Function2");
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

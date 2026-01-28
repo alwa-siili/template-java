@@ -44,6 +44,18 @@ public class ParentIfServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static IParentIf setService(IParentIfServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -53,14 +65,18 @@ public class ParentIfServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(ParentIf) called. For handler " + mHandler);
@@ -197,6 +213,7 @@ public class ParentIfServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			ParentIfMessageType messageType = ParentIfMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			IParentIf backend;
 			synchronized (ParentIfServiceAdapter.sBackendMutex)
 			{
@@ -265,9 +282,12 @@ public class ParentIfServiceAdapter extends Service
 					
         data.setClassLoader(SimpleLocalIfParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        ISimpleLocalIf param = data.getParcelable("param", SimpleLocalIfParcelable.class).getSimpleLocalIf();
 					ISimpleLocalIf result =  backend.localIfMethod(param);
+
+					Log.i(TAG, "Called localIfMethod with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ParentIfMessageType.RPC_LocalIfMethodResp.getValue();
@@ -279,6 +299,7 @@ public class ParentIfServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -294,9 +315,12 @@ public class ParentIfServiceAdapter extends Service
 					
         data.setClassLoader(SimpleLocalIfParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     ISimpleLocalIf[] param =  SimpleLocalIfParcelable.unwrapArray((SimpleLocalIfParcelable[])data.getParcelableArray("param", SimpleLocalIfParcelable.class));
 					ISimpleLocalIf[] result =  backend.localIfMethodList(param);
+
+					Log.i(TAG, "Called localIfMethodList with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ParentIfMessageType.RPC_LocalIfMethodListResp.getValue();
@@ -308,6 +332,7 @@ public class ParentIfServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -323,9 +348,12 @@ public class ParentIfServiceAdapter extends Service
 					
         data.setClassLoader(tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        tbIfaceimport.tbIfaceimport_api.IEmptyIf param = data.getParcelable("param", tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class).getEmptyIf();
 					tbIfaceimport.tbIfaceimport_api.IEmptyIf result =  backend.importedIfMethod(param);
+
+					Log.i(TAG, "Called importedIfMethod with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ParentIfMessageType.RPC_ImportedIfMethodResp.getValue();
@@ -337,6 +365,7 @@ public class ParentIfServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -352,9 +381,12 @@ public class ParentIfServiceAdapter extends Service
 					
         data.setClassLoader(tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     tbIfaceimport.tbIfaceimport_api.IEmptyIf[] param =  tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.unwrapArray((tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable[])data.getParcelableArray("param", tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class));
 					tbIfaceimport.tbIfaceimport_api.IEmptyIf[] result =  backend.importedIfMethodList(param);
+
+					Log.i(TAG, "Called importedIfMethodList with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = ParentIfMessageType.RPC_ImportedIfMethodListResp.getValue();
@@ -366,6 +398,7 @@ public class ParentIfServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

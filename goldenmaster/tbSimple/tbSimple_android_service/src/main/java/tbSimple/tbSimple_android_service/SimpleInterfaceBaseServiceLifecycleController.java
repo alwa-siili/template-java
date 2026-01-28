@@ -38,6 +38,7 @@ public abstract class SimpleInterfaceBaseServiceLifecycleController
 
     public ISimpleInterface start(Context context)
     {
+        Log.i(getTag(), "SimpleInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

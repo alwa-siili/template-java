@@ -81,8 +81,8 @@ public class EmptyInterfaceClient extends AbstractEmptyInterface implements Serv
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbSimple.tbSimple_android_service.EmptyInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -94,7 +94,7 @@ public class EmptyInterfaceClient extends AbstractEmptyInterface implements Serv
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, EmptyInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -106,7 +106,7 @@ public class EmptyInterfaceClient extends AbstractEmptyInterface implements Serv
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -175,7 +175,7 @@ public class EmptyInterfaceClient extends AbstractEmptyInterface implements Serv
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + EmptyInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (EmptyInterfaceMessageType.fromInteger(msg.what))
 		    {

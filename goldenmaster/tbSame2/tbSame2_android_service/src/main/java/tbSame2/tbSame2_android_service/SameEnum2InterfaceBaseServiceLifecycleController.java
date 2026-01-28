@@ -38,6 +38,7 @@ public abstract class SameEnum2InterfaceBaseServiceLifecycleController
 
     public ISameEnum2Interface start(Context context)
     {
+        Log.i(getTag(), "SameEnum2InterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

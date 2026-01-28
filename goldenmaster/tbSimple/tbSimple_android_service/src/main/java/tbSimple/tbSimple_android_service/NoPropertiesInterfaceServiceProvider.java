@@ -54,7 +54,7 @@ public class NoPropertiesInterfaceServiceProvider extends HandlerThread implemen
 		if (m_Service == null)
 		{
 			m_Service = new NoPropertiesInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NoPropertiesInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NoPropertiesInterfaceService");
 		}
 
 		return m_Service;

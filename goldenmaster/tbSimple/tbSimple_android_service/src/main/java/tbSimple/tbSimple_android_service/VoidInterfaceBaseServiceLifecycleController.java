@@ -38,6 +38,7 @@ public abstract class VoidInterfaceBaseServiceLifecycleController
 
     public IVoidInterface start(Context context)
     {
+        Log.i(getTag(), "VoidInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

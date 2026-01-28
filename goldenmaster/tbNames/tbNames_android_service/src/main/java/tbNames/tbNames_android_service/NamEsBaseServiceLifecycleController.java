@@ -38,6 +38,7 @@ public abstract class NamEsBaseServiceLifecycleController
 
     public INamEs start(Context context)
     {
+        Log.i(getTag(), "NamEsBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

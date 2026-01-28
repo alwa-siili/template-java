@@ -38,6 +38,7 @@ public abstract class ManyParamInterfaceBaseServiceLifecycleController
 
     public IManyParamInterface start(Context context)
     {
+        Log.i(getTag(), "ManyParamInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

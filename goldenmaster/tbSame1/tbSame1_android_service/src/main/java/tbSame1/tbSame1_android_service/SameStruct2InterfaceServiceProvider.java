@@ -54,7 +54,7 @@ public class SameStruct2InterfaceServiceProvider extends HandlerThread implement
 		if (m_Service == null)
 		{
 			m_Service = new SameStruct2InterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SameStruct2InterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SameStruct2InterfaceService");
 		}
 
 		return m_Service;

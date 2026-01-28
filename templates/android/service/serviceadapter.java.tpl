@@ -44,6 +44,18 @@ public class {{Camel .Interface.Name }}ServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static I{{Camel .Interface.Name}} setService(I{{Camel .Interface.Name}}ServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -53,14 +65,18 @@ public class {{Camel .Interface.Name }}ServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService({{Camel .Interface.Name}}) called. For handler " + mHandler);
@@ -198,6 +214,7 @@ public class {{Camel .Interface.Name }}ServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			{{Camel .Interface.Name}}MessageType messageType = {{Camel .Interface.Name}}MessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			I{{Camel .Interface.Name}} backend;
 			synchronized ({{Camel .Interface.Name }}ServiceAdapter.sBackendMutex)
 			{
@@ -242,11 +259,14 @@ public class {{Camel .Interface.Name }}ServiceAdapter extends Service
 					Bundle data = msg.getData();
 					{{template "setClassLoaderIfNeeded" .Params}}
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 
 					{{- range .Params }}
 					{{template "getDataFromBundle" . }}
 					{{- end }}
 					{{ if not .Return.IsVoid }}{{javaReturn "" .Return}} result = {{ end}} backend.{{camel .Name}}({{javaVars .Params}});
+
+					Log.i(TAG, "Called {{.Name}}{{ if not .Return.IsVoid }} with result={{ end }}"{{ if not .Return.IsVoid }} + result{{ end }});
 
 					Message respMsg = new Message();
 					respMsg.what = {{$InterfaceName}}MessageType.RPC_{{Camel .Name}}Resp.getValue();
@@ -259,6 +279,7 @@ public class {{Camel .Interface.Name }}ServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

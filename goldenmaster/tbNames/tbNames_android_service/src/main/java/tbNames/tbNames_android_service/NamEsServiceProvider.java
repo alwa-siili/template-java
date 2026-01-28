@@ -54,7 +54,7 @@ public class NamEsServiceProvider extends HandlerThread implements INamEsService
 		if (m_Service == null)
 		{
 			m_Service = new NamEsService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NamEsService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new NamEsService");
 		}
 
 		return m_Service;

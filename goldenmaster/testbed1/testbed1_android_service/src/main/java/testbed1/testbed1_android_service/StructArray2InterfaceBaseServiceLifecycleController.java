@@ -38,6 +38,7 @@ public abstract class StructArray2InterfaceBaseServiceLifecycleController
 
     public IStructArray2Interface start(Context context)
     {
+        Log.i(getTag(), "StructArray2InterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

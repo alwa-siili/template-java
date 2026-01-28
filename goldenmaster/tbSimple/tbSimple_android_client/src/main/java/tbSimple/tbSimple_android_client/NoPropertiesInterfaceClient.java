@@ -81,8 +81,8 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbSimple.tbSimple_android_service.NoPropertiesInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -94,7 +94,7 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, NoPropertiesInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -106,7 +106,7 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -175,7 +175,7 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + NoPropertiesInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (NoPropertiesInterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -210,6 +210,7 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -218,7 +219,7 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
                     }
                     else
                     {
-                        Log.v(TAG, "received NoPropertiesInterfaceMessageType.RPC_FuncVoidResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received NoPropertiesInterfaceMessageType.RPC_FuncVoidResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -227,6 +228,7 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -235,7 +237,7 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
                     }
                     else
                     {
-                        Log.v(TAG, "received NoPropertiesInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received NoPropertiesInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -279,12 +281,17 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
         CompletableFuture<Void>  future = new CompletableFuture<>();
         Consumer<Bundle> resolver = bundle -> {
             future.complete(null);
-            Log.v(TAG, "resolve funcVoid");
+            Log.i(TAG, "resolve funcVoid");
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -320,13 +327,18 @@ public class NoPropertiesInterfaceClient extends AbstractNoPropertiesInterface i
         Consumer<Bundle> resolver = bundle -> {
             
 		    boolean result = bundle.getBoolean("result", false);
-            Log.v(TAG, "resolve funcBool" + result);
+            Log.i(TAG, "resolve funcBool" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

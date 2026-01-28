@@ -42,6 +42,18 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static ISimpleArrayInterface setService(ISimpleArrayInterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -51,14 +63,18 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(SimpleArrayInterface) called. For handler " + mHandler);
@@ -195,6 +211,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			SimpleArrayInterfaceMessageType messageType = SimpleArrayInterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			ISimpleArrayInterface backend;
 			synchronized (SimpleArrayInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -298,9 +315,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        boolean[] paramBool = data.getBooleanArray("paramBool");
 					boolean[] result =  backend.funcBool(paramBool);
+
+					Log.i(TAG, "Called funcBool with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncBoolResp.getValue();
@@ -312,6 +332,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -326,9 +347,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        int[] paramInt = data.getIntArray("paramInt");
 					int[] result =  backend.funcInt(paramInt);
+
+					Log.i(TAG, "Called funcInt with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncIntResp.getValue();
@@ -340,6 +364,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -354,9 +379,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        int[] paramInt32 = data.getIntArray("paramInt32");
 					int[] result =  backend.funcInt32(paramInt32);
+
+					Log.i(TAG, "Called funcInt32 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncInt32Resp.getValue();
@@ -368,6 +396,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -382,9 +411,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        long[] paramInt64 = data.getLongArray("paramInt64");
 					long[] result =  backend.funcInt64(paramInt64);
+
+					Log.i(TAG, "Called funcInt64 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncInt64Resp.getValue();
@@ -396,6 +428,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -410,9 +443,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        float[] paramFloat = data.getFloatArray("paramFloat");
 					float[] result =  backend.funcFloat(paramFloat);
+
+					Log.i(TAG, "Called funcFloat with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncFloatResp.getValue();
@@ -424,6 +460,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -438,9 +475,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        float[] paramFloat32 = data.getFloatArray("paramFloat32");
 					float[] result =  backend.funcFloat32(paramFloat32);
+
+					Log.i(TAG, "Called funcFloat32 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncFloat32Resp.getValue();
@@ -452,6 +492,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -466,9 +507,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        double[] paramFloat = data.getDoubleArray("paramFloat");
 					double[] result =  backend.funcFloat64(paramFloat);
+
+					Log.i(TAG, "Called funcFloat64 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncFloat64Resp.getValue();
@@ -480,6 +524,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -494,9 +539,12 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        String[] paramString = data.getStringArray("paramString");
 					String[] result =  backend.funcString(paramString);
+
+					Log.i(TAG, "Called funcString with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SimpleArrayInterfaceMessageType.RPC_FuncStringResp.getValue();
@@ -508,6 +556,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

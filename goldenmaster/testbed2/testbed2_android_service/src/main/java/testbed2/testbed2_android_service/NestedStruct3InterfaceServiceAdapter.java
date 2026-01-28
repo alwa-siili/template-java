@@ -48,6 +48,18 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static INestedStruct3Interface setService(INestedStruct3InterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -57,14 +69,18 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(NestedStruct3Interface) called. For handler " + mHandler);
@@ -201,6 +217,7 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			NestedStruct3InterfaceMessageType messageType = NestedStruct3InterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			INestedStruct3Interface backend;
 			synchronized (NestedStruct3InterfaceServiceAdapter.sBackendMutex)
 			{
@@ -260,9 +277,12 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 					
         data.setClassLoader(NestedStruct1Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        NestedStruct1 param1 = data.getParcelable("param1", NestedStruct1Parcelable.class).getNestedStruct1();
 					NestedStruct1 result =  backend.func1(param1);
+
+					Log.i(TAG, "Called func1 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = NestedStruct3InterfaceMessageType.RPC_Func1Resp.getValue();
@@ -274,6 +294,7 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -291,11 +312,14 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
     // therefore, any class loader provide access to the same PathClassLoader.
         data.setClassLoader(NestedStruct1Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        NestedStruct1 param1 = data.getParcelable("param1", NestedStruct1Parcelable.class).getNestedStruct1();
 					
 			        NestedStruct2 param2 = data.getParcelable("param2", NestedStruct2Parcelable.class).getNestedStruct2();
 					NestedStruct1 result =  backend.func2(param1, param2);
+
+					Log.i(TAG, "Called func2 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = NestedStruct3InterfaceMessageType.RPC_Func2Resp.getValue();
@@ -307,6 +331,7 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -324,6 +349,7 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
     // therefore, any class loader provide access to the same PathClassLoader.
         data.setClassLoader(NestedStruct1Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        NestedStruct1 param1 = data.getParcelable("param1", NestedStruct1Parcelable.class).getNestedStruct1();
 					
@@ -331,6 +357,8 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 					
 			        NestedStruct3 param3 = data.getParcelable("param3", NestedStruct3Parcelable.class).getNestedStruct3();
 					NestedStruct1 result =  backend.func3(param1, param2, param3);
+
+					Log.i(TAG, "Called func3 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = NestedStruct3InterfaceMessageType.RPC_Func3Resp.getValue();
@@ -342,6 +370,7 @@ public class NestedStruct3InterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

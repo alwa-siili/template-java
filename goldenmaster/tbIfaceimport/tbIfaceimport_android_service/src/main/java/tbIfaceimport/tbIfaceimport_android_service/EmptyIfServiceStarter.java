@@ -69,6 +69,23 @@ public class EmptyIfServiceStarter
 
     public static IEmptyIf start(Context ctx)
     {
+        Log.i(TAG, "EmptyIfServiceStarter::start called");
+        if (ctx == null)
+        {
+            Log.i(TAG, "Context is null");
+        }
+        else
+        {
+            Log.i(TAG, "Context (" + ctx.getClass().getName() + ") is: " + ctx.toString());
+        }
+        if (IMPL == null)
+        {
+            Log.i(TAG, "IMPL is null");
+        }
+        else
+        {
+            Log.i(TAG, "IMPL (" + IMPL.getClass().getName() + ") is: " + IMPL.toString());
+        }
         return IMPL.start(ctx);
     }
 

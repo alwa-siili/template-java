@@ -38,6 +38,7 @@ public abstract class NestedStruct1InterfaceBaseServiceLifecycleController
 
     public INestedStruct1Interface start(Context context)
     {
+        Log.i(getTag(), "NestedStruct1InterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

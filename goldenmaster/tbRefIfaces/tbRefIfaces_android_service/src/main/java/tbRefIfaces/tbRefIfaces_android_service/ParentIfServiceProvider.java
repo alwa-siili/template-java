@@ -54,7 +54,7 @@ public class ParentIfServiceProvider extends HandlerThread implements IParentIfS
 		if (m_Service == null)
 		{
 			m_Service = new ParentIfService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new ParentIfService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new ParentIfService");
 		}
 
 		return m_Service;

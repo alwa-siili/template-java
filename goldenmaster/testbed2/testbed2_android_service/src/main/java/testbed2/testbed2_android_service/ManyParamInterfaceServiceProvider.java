@@ -54,7 +54,7 @@ public class ManyParamInterfaceServiceProvider extends HandlerThread implements 
 		if (m_Service == null)
 		{
 			m_Service = new ManyParamInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new ManyParamInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new ManyParamInterfaceService");
 		}
 
 		return m_Service;

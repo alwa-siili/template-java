@@ -54,7 +54,7 @@ public class StructArray2InterfaceServiceProvider extends HandlerThread implemen
 		if (m_Service == null)
 		{
 			m_Service = new StructArray2InterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new StructArray2InterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new StructArray2InterfaceService");
 		}
 
 		return m_Service;

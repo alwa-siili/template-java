@@ -54,7 +54,7 @@ public class EmptyInterfaceServiceProvider extends HandlerThread implements IEmp
 		if (m_Service == null)
 		{
 			m_Service = new EmptyInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new EmptyInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new EmptyInterfaceService");
 		}
 
 		return m_Service;

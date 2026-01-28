@@ -54,7 +54,7 @@ public class EmptyIfServiceProvider extends HandlerThread implements IEmptyIfSer
 		if (m_Service == null)
 		{
 			m_Service = new EmptyIfService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new EmptyIfService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new EmptyIfService");
 		}
 
 		return m_Service;

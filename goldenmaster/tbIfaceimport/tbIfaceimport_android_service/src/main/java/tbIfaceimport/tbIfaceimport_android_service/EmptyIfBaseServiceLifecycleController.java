@@ -38,6 +38,7 @@ public abstract class EmptyIfBaseServiceLifecycleController
 
     public IEmptyIf start(Context context)
     {
+        Log.i(getTag(), "EmptyIfBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

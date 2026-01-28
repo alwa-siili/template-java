@@ -38,6 +38,7 @@ public abstract class ParentIfBaseServiceLifecycleController
 
     public IParentIf start(Context context)
     {
+        Log.i(getTag(), "ParentIfBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

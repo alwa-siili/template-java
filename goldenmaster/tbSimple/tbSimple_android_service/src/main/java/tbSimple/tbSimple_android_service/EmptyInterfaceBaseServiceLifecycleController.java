@@ -38,6 +38,7 @@ public abstract class EmptyInterfaceBaseServiceLifecycleController
 
     public IEmptyInterface start(Context context)
     {
+        Log.i(getTag(), "EmptyInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

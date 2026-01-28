@@ -89,8 +89,8 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbSimple.tbSimple_android_service.SimpleInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -102,7 +102,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, SimpleInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -114,7 +114,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -183,7 +183,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + SimpleInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (SimpleInterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -378,6 +378,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -386,7 +387,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncNoReturnValueResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncNoReturnValueResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -395,6 +396,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -403,7 +405,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncNoParamsResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncNoParamsResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -412,6 +414,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -420,7 +423,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -429,6 +432,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -437,7 +441,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -446,6 +450,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -454,7 +459,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncInt32Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncInt32Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -463,6 +468,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -471,7 +477,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncInt64Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncInt64Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -480,6 +486,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -488,7 +495,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -497,6 +504,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -505,7 +513,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncFloat32Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncFloat32Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -514,6 +522,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -522,7 +531,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncFloat64Resp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncFloat64Resp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -531,6 +540,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
 
 				    Bundle data = msg.getData();
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -539,7 +549,7 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received SimpleInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received SimpleInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -873,12 +883,17 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         CompletableFuture<Void>  future = new CompletableFuture<>();
         Consumer<Bundle> resolver = bundle -> {
             future.complete(null);
-            Log.v(TAG, "resolve funcNoReturnValue");
+            Log.i(TAG, "resolve funcNoReturnValue");
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -912,13 +927,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    boolean result = bundle.getBoolean("result", false);
-            Log.v(TAG, "resolve funcNoParams" + result);
+            Log.i(TAG, "resolve funcNoParams" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -954,13 +974,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    boolean result = bundle.getBoolean("result", false);
-            Log.v(TAG, "resolve funcBool" + result);
+            Log.i(TAG, "resolve funcBool" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -996,13 +1021,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    int result = bundle.getInt("result", 0);
-            Log.v(TAG, "resolve funcInt" + result);
+            Log.i(TAG, "resolve funcInt" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1038,13 +1068,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    int result = bundle.getInt("result", 0);
-            Log.v(TAG, "resolve funcInt32" + result);
+            Log.i(TAG, "resolve funcInt32" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1080,13 +1115,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    long result = bundle.getLong("result", 0L);
-            Log.v(TAG, "resolve funcInt64" + result);
+            Log.i(TAG, "resolve funcInt64" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1122,13 +1162,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    float result = bundle.getFloat("result", 0.0f);
-            Log.v(TAG, "resolve funcFloat" + result);
+            Log.i(TAG, "resolve funcFloat" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1164,13 +1209,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    float result = bundle.getFloat("result", 0.0f);
-            Log.v(TAG, "resolve funcFloat32" + result);
+            Log.i(TAG, "resolve funcFloat32" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1206,13 +1256,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    double result = bundle.getDouble("result", 0.0);
-            Log.v(TAG, "resolve funcFloat64" + result);
+            Log.i(TAG, "resolve funcFloat64" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -1248,13 +1303,18 @@ public class SimpleInterfaceClient extends AbstractSimpleInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    String result = bundle.getString("result", new String());
-            Log.v(TAG, "resolve funcString" + result);
+            Log.i(TAG, "resolve funcString" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

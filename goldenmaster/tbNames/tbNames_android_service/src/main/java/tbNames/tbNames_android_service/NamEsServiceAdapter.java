@@ -44,6 +44,18 @@ public class NamEsServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static INamEs setService(INamEsServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -53,14 +65,18 @@ public class NamEsServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(NamEs) called. For handler " + mHandler);
@@ -197,6 +213,7 @@ public class NamEsServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			NamEsMessageType messageType = NamEsMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			INamEs backend;
 			synchronized (NamEsServiceAdapter.sBackendMutex)
 			{
@@ -261,9 +278,12 @@ public class NamEsServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        boolean SOME_PARAM = data.getBoolean("SOME_PARAM", false);
 					 backend.someFunction(SOME_PARAM);
+
+					Log.i(TAG, "Called SOME_FUNCTION");
 
 					Message respMsg = new Message();
 					respMsg.what = NamEsMessageType.RPC_SomeFunctionResp.getValue();
@@ -273,6 +293,7 @@ public class NamEsServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -287,9 +308,12 @@ public class NamEsServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        boolean Some_Param = data.getBoolean("Some_Param", false);
 					 backend.someFunction2(Some_Param);
+
+					Log.i(TAG, "Called Some_Function2");
 
 					Message respMsg = new Message();
 					respMsg.what = NamEsMessageType.RPC_SomeFunction2Resp.getValue();
@@ -299,6 +323,7 @@ public class NamEsServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

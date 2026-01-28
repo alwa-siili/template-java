@@ -42,6 +42,18 @@ public class CounterServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static ICounter setService(ICounterServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -51,14 +63,18 @@ public class CounterServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(Counter) called. For handler " + mHandler);
@@ -195,6 +211,7 @@ public class CounterServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			CounterMessageType messageType = CounterMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			ICounter backend;
 			synchronized (CounterServiceAdapter.sBackendMutex)
 			{
@@ -263,9 +280,12 @@ public class CounterServiceAdapter extends Service
 					
         data.setClassLoader(externTypes.externTypes_android_messenger.MyVector3DParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        org.apache.commons.math3.geometry.euclidean.threed.Vector3D vec = data.getParcelable("vec", externTypes.externTypes_android_messenger.MyVector3DParcelable.class).getMyVector3D();
 					org.apache.commons.math3.geometry.euclidean.threed.Vector3D result =  backend.increment(vec);
+
+					Log.i(TAG, "Called increment with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = CounterMessageType.RPC_IncrementResp.getValue();
@@ -277,6 +297,7 @@ public class CounterServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -292,9 +313,12 @@ public class CounterServiceAdapter extends Service
 					
         data.setClassLoader(externTypes.externTypes_android_messenger.MyVector3DParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     org.apache.commons.math3.geometry.euclidean.threed.Vector3D[] vec =  externTypes.externTypes_android_messenger.MyVector3DParcelable.unwrapArray((externTypes.externTypes_android_messenger.MyVector3DParcelable[])data.getParcelableArray("vec", externTypes.externTypes_android_messenger.MyVector3DParcelable.class));
 					org.apache.commons.math3.geometry.euclidean.threed.Vector3D[] result =  backend.incrementArray(vec);
+
+					Log.i(TAG, "Called incrementArray with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = CounterMessageType.RPC_IncrementArrayResp.getValue();
@@ -306,6 +330,7 @@ public class CounterServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -321,9 +346,12 @@ public class CounterServiceAdapter extends Service
 					
         data.setClassLoader(customTypes.customTypes_android_messenger.Vector3DParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        customTypes.customTypes_api.Vector3D vec = data.getParcelable("vec", customTypes.customTypes_android_messenger.Vector3DParcelable.class).getVector3D();
 					customTypes.customTypes_api.Vector3D result =  backend.decrement(vec);
+
+					Log.i(TAG, "Called decrement with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = CounterMessageType.RPC_DecrementResp.getValue();
@@ -335,6 +363,7 @@ public class CounterServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -350,9 +379,12 @@ public class CounterServiceAdapter extends Service
 					
         data.setClassLoader(customTypes.customTypes_android_messenger.Vector3DParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     customTypes.customTypes_api.Vector3D[] vec =  customTypes.customTypes_android_messenger.Vector3DParcelable.unwrapArray((customTypes.customTypes_android_messenger.Vector3DParcelable[])data.getParcelableArray("vec", customTypes.customTypes_android_messenger.Vector3DParcelable.class));
 					customTypes.customTypes_api.Vector3D[] result =  backend.decrementArray(vec);
+
+					Log.i(TAG, "Called decrementArray with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = CounterMessageType.RPC_DecrementArrayResp.getValue();
@@ -364,6 +396,7 @@ public class CounterServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

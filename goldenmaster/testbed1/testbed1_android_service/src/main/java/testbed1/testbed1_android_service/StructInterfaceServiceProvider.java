@@ -54,7 +54,7 @@ public class StructInterfaceServiceProvider extends HandlerThread implements ISt
 		if (m_Service == null)
 		{
 			m_Service = new StructInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new StructInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new StructInterfaceService");
 		}
 
 		return m_Service;

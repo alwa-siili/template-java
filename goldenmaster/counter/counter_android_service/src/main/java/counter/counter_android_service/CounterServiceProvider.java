@@ -54,7 +54,7 @@ public class CounterServiceProvider extends HandlerThread implements ICounterSer
 		if (m_Service == null)
 		{
 			m_Service = new CounterService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new CounterService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new CounterService");
 		}
 
 		return m_Service;

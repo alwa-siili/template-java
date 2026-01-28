@@ -54,7 +54,7 @@ public class SimpleInterfaceServiceProvider extends HandlerThread implements ISi
 		if (m_Service == null)
 		{
 			m_Service = new SimpleInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SimpleInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SimpleInterfaceService");
 		}
 
 		return m_Service;

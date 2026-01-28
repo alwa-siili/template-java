@@ -54,7 +54,7 @@ public class SimpleLocalIfServiceProvider extends HandlerThread implements ISimp
 		if (m_Service == null)
 		{
 			m_Service = new SimpleLocalIfService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SimpleLocalIfService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SimpleLocalIfService");
 		}
 
 		return m_Service;

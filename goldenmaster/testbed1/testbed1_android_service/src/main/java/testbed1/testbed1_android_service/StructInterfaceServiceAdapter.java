@@ -50,6 +50,18 @@ public class StructInterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static IStructInterface setService(IStructInterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -59,14 +71,18 @@ public class StructInterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(StructInterface) called. For handler " + mHandler);
@@ -203,6 +219,7 @@ public class StructInterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			StructInterfaceMessageType messageType = StructInterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			IStructInterface backend;
 			synchronized (StructInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -271,9 +288,12 @@ public class StructInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructBoolParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        StructBool paramBool = data.getParcelable("paramBool", StructBoolParcelable.class).getStructBool();
 					StructBool result =  backend.funcBool(paramBool);
+
+					Log.i(TAG, "Called funcBool with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructInterfaceMessageType.RPC_FuncBoolResp.getValue();
@@ -285,6 +305,7 @@ public class StructInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -300,9 +321,12 @@ public class StructInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructIntParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        StructInt paramInt = data.getParcelable("paramInt", StructIntParcelable.class).getStructInt();
 					StructInt result =  backend.funcInt(paramInt);
+
+					Log.i(TAG, "Called funcInt with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructInterfaceMessageType.RPC_FuncIntResp.getValue();
@@ -314,6 +338,7 @@ public class StructInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -329,9 +354,12 @@ public class StructInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructFloatParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        StructFloat paramFloat = data.getParcelable("paramFloat", StructFloatParcelable.class).getStructFloat();
 					StructFloat result =  backend.funcFloat(paramFloat);
+
+					Log.i(TAG, "Called funcFloat with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructInterfaceMessageType.RPC_FuncFloatResp.getValue();
@@ -343,6 +371,7 @@ public class StructInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -358,9 +387,12 @@ public class StructInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructStringParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        StructString paramString = data.getParcelable("paramString", StructStringParcelable.class).getStructString();
 					StructString result =  backend.funcString(paramString);
+
+					Log.i(TAG, "Called funcString with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructInterfaceMessageType.RPC_FuncStringResp.getValue();
@@ -372,6 +404,7 @@ public class StructInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

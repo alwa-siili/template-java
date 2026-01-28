@@ -38,6 +38,7 @@ public abstract class EnumInterfaceBaseServiceLifecycleController
 
     public IEnumInterface start(Context context)
     {
+        Log.i(getTag(), "EnumInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

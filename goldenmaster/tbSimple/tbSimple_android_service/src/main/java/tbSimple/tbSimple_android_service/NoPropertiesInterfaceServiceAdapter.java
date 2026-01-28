@@ -42,6 +42,18 @@ public class NoPropertiesInterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static INoPropertiesInterface setService(INoPropertiesInterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -51,14 +63,18 @@ public class NoPropertiesInterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(NoPropertiesInterface) called. For handler " + mHandler);
@@ -195,6 +211,7 @@ public class NoPropertiesInterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			NoPropertiesInterfaceMessageType messageType = NoPropertiesInterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			INoPropertiesInterface backend;
 			synchronized (NoPropertiesInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -226,7 +243,10 @@ public class NoPropertiesInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					 backend.funcVoid();
+
+					Log.i(TAG, "Called funcVoid");
 
 					Message respMsg = new Message();
 					respMsg.what = NoPropertiesInterfaceMessageType.RPC_FuncVoidResp.getValue();
@@ -236,6 +256,7 @@ public class NoPropertiesInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -250,9 +271,12 @@ public class NoPropertiesInterfaceServiceAdapter extends Service
 					Bundle data = msg.getData();
 					
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        boolean paramBool = data.getBoolean("paramBool", false);
 					boolean result =  backend.funcBool(paramBool);
+
+					Log.i(TAG, "Called funcBool with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = NoPropertiesInterfaceMessageType.RPC_FuncBoolResp.getValue();
@@ -264,6 +288,7 @@ public class NoPropertiesInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

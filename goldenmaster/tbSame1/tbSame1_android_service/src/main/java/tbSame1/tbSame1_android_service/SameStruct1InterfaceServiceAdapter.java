@@ -44,6 +44,18 @@ public class SameStruct1InterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static ISameStruct1Interface setService(ISameStruct1InterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -53,14 +65,18 @@ public class SameStruct1InterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(SameStruct1Interface) called. For handler " + mHandler);
@@ -197,6 +213,7 @@ public class SameStruct1InterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			SameStruct1InterfaceMessageType messageType = SameStruct1InterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			ISameStruct1Interface backend;
 			synchronized (SameStruct1InterfaceServiceAdapter.sBackendMutex)
 			{
@@ -238,9 +255,12 @@ public class SameStruct1InterfaceServiceAdapter extends Service
 					
         data.setClassLoader(Struct1Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        Struct1 param1 = data.getParcelable("param1", Struct1Parcelable.class).getStruct1();
 					Struct1 result =  backend.func1(param1);
+
+					Log.i(TAG, "Called func1 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = SameStruct1InterfaceMessageType.RPC_Func1Resp.getValue();
@@ -252,6 +272,7 @@ public class SameStruct1InterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

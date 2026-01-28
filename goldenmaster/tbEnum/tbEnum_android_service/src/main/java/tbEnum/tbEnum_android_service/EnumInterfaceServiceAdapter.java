@@ -50,6 +50,18 @@ public class EnumInterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static IEnumInterface setService(IEnumInterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -59,14 +71,18 @@ public class EnumInterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(EnumInterface) called. For handler " + mHandler);
@@ -203,6 +219,7 @@ public class EnumInterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			EnumInterfaceMessageType messageType = EnumInterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			IEnumInterface backend;
 			synchronized (EnumInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -271,9 +288,12 @@ public class EnumInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(Enum0Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        Enum0 param0 = data.getParcelable("param0", Enum0Parcelable.class).getEnum0();
 					Enum0 result =  backend.func0(param0);
+
+					Log.i(TAG, "Called func0 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = EnumInterfaceMessageType.RPC_Func0Resp.getValue();
@@ -285,6 +305,7 @@ public class EnumInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -300,9 +321,12 @@ public class EnumInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(Enum1Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        Enum1 param1 = data.getParcelable("param1", Enum1Parcelable.class).getEnum1();
 					Enum1 result =  backend.func1(param1);
+
+					Log.i(TAG, "Called func1 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = EnumInterfaceMessageType.RPC_Func1Resp.getValue();
@@ -314,6 +338,7 @@ public class EnumInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -329,9 +354,12 @@ public class EnumInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(Enum2Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        Enum2 param2 = data.getParcelable("param2", Enum2Parcelable.class).getEnum2();
 					Enum2 result =  backend.func2(param2);
+
+					Log.i(TAG, "Called func2 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = EnumInterfaceMessageType.RPC_Func2Resp.getValue();
@@ -343,6 +371,7 @@ public class EnumInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -358,9 +387,12 @@ public class EnumInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(Enum3Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
 			        Enum3 param3 = data.getParcelable("param3", Enum3Parcelable.class).getEnum3();
 					Enum3 result =  backend.func3(param3);
+
+					Log.i(TAG, "Called func3 with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = EnumInterfaceMessageType.RPC_Func3Resp.getValue();
@@ -372,6 +404,7 @@ public class EnumInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

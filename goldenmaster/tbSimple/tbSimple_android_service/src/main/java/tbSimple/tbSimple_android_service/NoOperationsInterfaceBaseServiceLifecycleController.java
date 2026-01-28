@@ -38,6 +38,7 @@ public abstract class NoOperationsInterfaceBaseServiceLifecycleController
 
     public INoOperationsInterface start(Context context)
     {
+        Log.i(getTag(), "NoOperationsInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

@@ -38,6 +38,7 @@ public abstract class StructInterfaceBaseServiceLifecycleController
 
     public IStructInterface start(Context context)
     {
+        Log.i(getTag(), "StructInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

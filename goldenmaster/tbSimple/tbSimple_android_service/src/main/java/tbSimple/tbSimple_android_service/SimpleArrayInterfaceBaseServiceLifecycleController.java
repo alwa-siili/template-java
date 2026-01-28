@@ -38,6 +38,7 @@ public abstract class SimpleArrayInterfaceBaseServiceLifecycleController
 
     public ISimpleArrayInterface start(Context context)
     {
+        Log.i(getTag(), "SimpleArrayInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

@@ -93,8 +93,8 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
         Intent intent = new Intent();
         intent.setClassName(packageName, "testbed1.testbed1_android_service.StructInterfaceServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -106,7 +106,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, StructInterfaceMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -118,7 +118,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -187,7 +187,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + StructInterfaceMessageType.fromInteger(msg.what));
 
 		    switch (StructInterfaceMessageType.fromInteger(msg.what))
 		    {
@@ -306,6 +306,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructBoolParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -314,7 +315,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received StructInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructInterfaceMessageType.RPC_FuncBoolResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -324,6 +325,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructIntParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -332,7 +334,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received StructInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructInterfaceMessageType.RPC_FuncIntResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -342,6 +344,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructFloatParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -350,7 +353,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received StructInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructInterfaceMessageType.RPC_FuncFloatResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -360,6 +363,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
 				    Bundle data = msg.getData();
 					data.setClassLoader(StructStringParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -368,7 +372,7 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
                     }
                     else
                     {
-                        Log.v(TAG, "received StructInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received StructInterfaceMessageType.RPC_FuncStringResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -566,13 +570,18 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    StructBool result = bundle.getParcelable("result", StructBoolParcelable.class).getStructBool();
-            Log.v(TAG, "resolve funcBool" + result);
+            Log.i(TAG, "resolve funcBool" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -608,13 +617,18 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    StructInt result = bundle.getParcelable("result", StructIntParcelable.class).getStructInt();
-            Log.v(TAG, "resolve funcInt" + result);
+            Log.i(TAG, "resolve funcInt" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -650,13 +664,18 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    StructFloat result = bundle.getParcelable("result", StructFloatParcelable.class).getStructFloat();
-            Log.v(TAG, "resolve funcFloat" + result);
+            Log.i(TAG, "resolve funcFloat" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -692,13 +711,18 @@ public class StructInterfaceClient extends AbstractStructInterface implements Se
         Consumer<Bundle> resolver = bundle -> {
             
 		    StructString result = bundle.getParcelable("result", StructStringParcelable.class).getStructString();
-            Log.v(TAG, "resolve funcString" + result);
+            Log.i(TAG, "resolve funcString" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

@@ -38,6 +38,7 @@ public abstract class NoPropertiesInterfaceBaseServiceLifecycleController
 
     public INoPropertiesInterface start(Context context)
     {
+        Log.i(getTag(), "NoPropertiesInterfaceBaseServiceLifecycleController::start called");
         mContext = context;
         if (mContext == null)
         {

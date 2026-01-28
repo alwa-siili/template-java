@@ -52,6 +52,18 @@ public class StructArrayInterfaceServiceAdapter extends Service
 	{
 	}
 
+	private static void logObject(String name, Object object)
+	{
+		if (object == null)
+		{
+			Log.i(TAG, "object " + name + " is null");
+		}
+		else
+		{
+			Log.i(TAG, "object " + name + "(" + object.getClass().getName() + ") is: " + object.toString());
+		}
+	}
+
 	public static IStructArrayInterface setService(IStructArrayInterfaceServiceProvider serviceProvider)
 	{
 		Log.i(TAG, "Setting serviceProvider: " + serviceProvider);
@@ -61,14 +73,18 @@ public class StructArrayInterfaceServiceAdapter extends Service
 		}
 		synchronized (sBackendMutex)
 		{
+			logObject("mHandler", mHandler);
+			logObject("mBackendService", mBackendService);
 			if (mHandler != null && mBackendService != null)
 			{
 				// remove old event listener (backend is about to change)
 				mBackendService.removeEventListener(mHandler);
 			}
+			logObject("mServiceProvider", mServiceProvider);
 			if (mServiceProvider != null)
 			{
 				mBackendService = mServiceProvider.getServiceInstance();
+				logObject("mBackendService", mBackendService);
 				if (mHandler != null)
 				{
 					Log.i(TAG, "LIFECYCLE: setService(StructArrayInterface) called. For handler " + mHandler);
@@ -205,6 +221,7 @@ public class StructArrayInterfaceServiceAdapter extends Service
 		{
 			Log.i(TAG, "Handle msg " + msg);
 			StructArrayInterfaceMessageType messageType = StructArrayInterfaceMessageType.fromInteger(msg.what);
+			Log.i(TAG, "Handling " + messageType);
 			IStructArrayInterface backend;
 			synchronized (StructArrayInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -282,9 +299,12 @@ public class StructArrayInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructBoolParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     StructBool[] paramBool =  StructBoolParcelable.unwrapArray((StructBoolParcelable[])data.getParcelableArray("paramBool", StructBoolParcelable.class));
 					StructBool[] result =  backend.funcBool(paramBool);
+
+					Log.i(TAG, "Called funcBool with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructArrayInterfaceMessageType.RPC_FuncBoolResp.getValue();
@@ -296,6 +316,7 @@ public class StructArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -311,9 +332,12 @@ public class StructArrayInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructIntParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     StructInt[] paramInt =  StructIntParcelable.unwrapArray((StructIntParcelable[])data.getParcelableArray("paramInt", StructIntParcelable.class));
 					StructInt[] result =  backend.funcInt(paramInt);
+
+					Log.i(TAG, "Called funcInt with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructArrayInterfaceMessageType.RPC_FuncIntResp.getValue();
@@ -325,6 +349,7 @@ public class StructArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -340,9 +365,12 @@ public class StructArrayInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructFloatParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     StructFloat[] paramFloat =  StructFloatParcelable.unwrapArray((StructFloatParcelable[])data.getParcelableArray("paramFloat", StructFloatParcelable.class));
 					StructFloat[] result =  backend.funcFloat(paramFloat);
+
+					Log.i(TAG, "Called funcFloat with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructArrayInterfaceMessageType.RPC_FuncFloatResp.getValue();
@@ -354,6 +382,7 @@ public class StructArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -369,9 +398,12 @@ public class StructArrayInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(StructStringParcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     StructString[] paramString =  StructStringParcelable.unwrapArray((StructStringParcelable[])data.getParcelableArray("paramString", StructStringParcelable.class));
 					StructString[] result =  backend.funcString(paramString);
+
+					Log.i(TAG, "Called funcString with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructArrayInterfaceMessageType.RPC_FuncStringResp.getValue();
@@ -383,6 +415,7 @@ public class StructArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}
@@ -398,9 +431,12 @@ public class StructArrayInterfaceServiceAdapter extends Service
 					
         data.setClassLoader(Enum0Parcelable.class.getClassLoader());
 					int callId = data.getInt("callId");
+					Log.i(TAG, "Received callId=" + callId);
 					
                     Enum0[] paramEnum =  Enum0Parcelable.unwrapArray((Enum0Parcelable[])data.getParcelableArray("paramEnum", Enum0Parcelable.class));
 					Enum0[] result =  backend.funcEnum(paramEnum);
+
+					Log.i(TAG, "Called funcEnum with result=" + result);
 
 					Message respMsg = new Message();
 					respMsg.what = StructArrayInterfaceMessageType.RPC_FuncEnumResp.getValue();
@@ -412,6 +448,7 @@ public class StructArrayInterfaceServiceAdapter extends Service
 
 					try {
 						msg.replyTo.send(respMsg);
+						Log.i(TAG, "Sent reply message");
 					} catch (RemoteException e) {
 						throw new RuntimeException(e);
 					}

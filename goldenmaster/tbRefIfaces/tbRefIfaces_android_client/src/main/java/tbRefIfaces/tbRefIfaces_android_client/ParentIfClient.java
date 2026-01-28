@@ -87,8 +87,8 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
         Intent intent = new Intent();
         intent.setClassName(packageName, "tbRefIfaces.tbRefIfaces_android_service.ParentIfServiceAdapter");
         intent.putExtra("connectionID", mConnectionId);
-        Log.d(TAG, "Using context: " + mApplicationContext.getClass().getName());
-        Log.d(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
+        Log.i(TAG, "Using context: " + mApplicationContext.getClass().getName());
+        Log.i(TAG, "bindToService intent=" + intent + ", mServiceConnection=" + this);
 
         return mApplicationContext.bindService(intent, this,0 );
     }
@@ -100,7 +100,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
     {
         if (mIsBoundToService)
         {
-            Log.v(TAG, "unbindFromService");
+            Log.i(TAG, "unbindFromService");
             Message msg = Message.obtain(null, ParentIfMessageType.UNREGISTER_CLIENT.ordinal());
             msg.getData().putString("connectionID", mConnectionId);
             mClientHandler.sendToService(msg);
@@ -112,7 +112,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
     @Override
     public void onServiceConnected(ComponentName name, IBinder serviceBinder)
     {
-        Log.v(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
+        Log.i(TAG, "onServiceConnected name=" + name + ", serviceBinder=" + serviceBinder);
         // Retrieve and use the Messenger
         mServiceMessenger = new Messenger(serviceBinder);
         mIsBoundToService = true;
@@ -181,7 +181,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
 	    @Override
 	    public void handleMessage(Message msg)
 	    {
-		    Log.i(TAG, "Handle msg " + msg);
+		    Log.i(TAG, "Handle msg " + msg + " " + ParentIfMessageType.fromInteger(msg.what));
 
 		    switch (ParentIfMessageType.fromInteger(msg.what))
 		    {
@@ -300,6 +300,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
 				    Bundle data = msg.getData();
 					data.setClassLoader(SimpleLocalIfParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -308,7 +309,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
                     }
                     else
                     {
-                        Log.v(TAG, "received ParentIfMessageType.RPC_LocalIfMethodResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received ParentIfMessageType.RPC_LocalIfMethodResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -318,6 +319,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
 				    Bundle data = msg.getData();
 					data.setClassLoader(SimpleLocalIfParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -326,7 +328,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
                     }
                     else
                     {
-                        Log.v(TAG, "received ParentIfMessageType.RPC_LocalIfMethodListResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received ParentIfMessageType.RPC_LocalIfMethodListResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -336,6 +338,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
 				    Bundle data = msg.getData();
 					data.setClassLoader(tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -344,7 +347,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
                     }
                     else
                     {
-                        Log.v(TAG, "received ParentIfMessageType.RPC_ImportedIfMethodResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received ParentIfMessageType.RPC_ImportedIfMethodResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -354,6 +357,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
 				    Bundle data = msg.getData();
 					data.setClassLoader(tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class.getClassLoader());
 				    int callId = data.getInt("callId");
+                    Log.i(TAG, "Received reply message with callId=" + callId);
 
 				    Consumer<Bundle> foundCall = mpendingCalls.remove(callId);
                     if (foundCall != null)
@@ -362,7 +366,7 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
                     }
                     else
                     {
-                        Log.v(TAG, "received ParentIfMessageType.RPC_ImportedIfMethodListResp , could not find pending call for " + msg.obj);
+                        Log.i(TAG, "received ParentIfMessageType.RPC_ImportedIfMethodListResp , could not find pending call for " + msg.obj);
                     }
 				    break;
 
@@ -552,13 +556,18 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
         Consumer<Bundle> resolver = bundle -> {
             
 		    ISimpleLocalIf result = bundle.getParcelable("result", SimpleLocalIfParcelable.class).getSimpleLocalIf();
-            Log.v(TAG, "resolve localIfMethod" + result);
+            Log.i(TAG, "resolve localIfMethod" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -594,13 +603,18 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
         Consumer<Bundle> resolver = bundle -> {
             
             ISimpleLocalIf[] result =  SimpleLocalIfParcelable.unwrapArray((SimpleLocalIfParcelable[])bundle.getParcelableArray("result", SimpleLocalIfParcelable.class));
-            Log.v(TAG, "resolve localIfMethodList" + result);
+            Log.i(TAG, "resolve localIfMethodList" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -636,13 +650,18 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
         Consumer<Bundle> resolver = bundle -> {
             
 		    tbIfaceimport.tbIfaceimport_api.IEmptyIf result = bundle.getParcelable("result", tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class).getEmptyIf();
-            Log.v(TAG, "resolve importedIfMethod" + result);
+            Log.i(TAG, "resolve importedIfMethod" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }
@@ -678,13 +697,18 @@ public class ParentIfClient extends AbstractParentIf implements ServiceConnectio
         Consumer<Bundle> resolver = bundle -> {
             
             tbIfaceimport.tbIfaceimport_api.IEmptyIf[] result =  tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.unwrapArray((tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable[])bundle.getParcelableArray("result", tbIfaceimport.tbIfaceimport_android_messenger.EmptyIfParcelable.class));
-            Log.v(TAG, "resolve importedIfMethodList" + result);
+            Log.i(TAG, "resolve importedIfMethodList" + result);
             future.complete(result);
         };
 
         // Store the lambda function in the map
+        Log.i(TAG, "Storing resolver for callId=" + msgId + " in the map");
         mpendingCalls.put(msgId, resolver);
+        Log.i(TAG, "Resolver for callId=" + msgId + " stored in the map");
+
+        Log.i(TAG, "Sending msg to adapter with callId=" + msgId);
 		mClientHandler.sendToService(msg);
+        Log.i(TAG, "msg with callId=" + msgId + " sent to adapter");
 
         return future;
     }    

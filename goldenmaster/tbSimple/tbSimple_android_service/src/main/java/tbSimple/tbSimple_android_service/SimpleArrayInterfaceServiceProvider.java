@@ -54,7 +54,7 @@ public class SimpleArrayInterfaceServiceProvider extends HandlerThread implement
 		if (m_Service == null)
 		{
 			m_Service = new SimpleArrayInterfaceService();
-			Log.d(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SimpleArrayInterfaceService");
+			Log.i(TAG, "LIFECYCLE: :GetInstance(with OBBFilename) - CREATED new SimpleArrayInterfaceService");
 		}
 
 		return m_Service;
