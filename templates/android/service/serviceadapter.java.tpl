@@ -197,6 +197,7 @@ public class {{Camel .Interface.Name }}ServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			{{Camel .Interface.Name}}MessageType messageType = {{Camel .Interface.Name}}MessageType.fromInteger(msg.what);
 			I{{Camel .Interface.Name}} backend;
 			synchronized ({{Camel .Interface.Name }}ServiceAdapter.sBackendMutex)
 			{
@@ -204,14 +205,14 @@ public class {{Camel .Interface.Name }}ServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if ({{Camel .Interface.Name}}MessageType.fromInteger(msg.what) != {{Camel .Interface.Name}}MessageType.REGISTER_CLIENT
-					&& {{Camel .Interface.Name}}MessageType.fromInteger(msg.what) != {{Camel .Interface.Name}}MessageType.UNREGISTER_CLIENT)
+				if (messageType != {{Camel .Interface.Name}}MessageType.REGISTER_CLIENT
+					&& messageType != {{Camel .Interface.Name}}MessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: {{Camel .Interface.Name}}MessageType" + {{Camel .Interface.Name}}MessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: {{Camel .Interface.Name}}MessageType" + messageType);
 					return;
 				}
 			}
-			switch ({{Camel .Interface.Name}}MessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));
