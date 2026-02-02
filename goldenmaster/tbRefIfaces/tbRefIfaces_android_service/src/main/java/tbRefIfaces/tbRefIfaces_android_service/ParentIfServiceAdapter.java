@@ -196,6 +196,7 @@ public class ParentIfServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			ParentIfMessageType messageType = ParentIfMessageType.fromInteger(msg.what);
 			IParentIf backend;
 			synchronized (ParentIfServiceAdapter.sBackendMutex)
 			{
@@ -203,14 +204,14 @@ public class ParentIfServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (ParentIfMessageType.fromInteger(msg.what) != ParentIfMessageType.REGISTER_CLIENT
-					&& ParentIfMessageType.fromInteger(msg.what) != ParentIfMessageType.UNREGISTER_CLIENT)
+				if (messageType != ParentIfMessageType.REGISTER_CLIENT
+					&& messageType != ParentIfMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: ParentIfMessageType" + ParentIfMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: ParentIfMessageType" + messageType);
 					return;
 				}
 			}
-			switch (ParentIfMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

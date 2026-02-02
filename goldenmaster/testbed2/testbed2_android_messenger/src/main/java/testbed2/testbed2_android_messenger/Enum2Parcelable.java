@@ -23,7 +23,8 @@ import java.util.Arrays;
     }
 
     protected Enum2Parcelable(Parcel in) {
-        this.data = Enum2.fromValue(in.readInt());
+        boolean dataIsValid = in.readBoolean();
+        this.data = dataIsValid ? Enum2.fromValue(in.readInt()) : null;
     }
 
     public static final Creator<Enum2Parcelable> CREATOR = new Creator<Enum2Parcelable>() {
@@ -41,6 +42,7 @@ import java.util.Arrays;
     @Override
     public void writeToParcel(Parcel dest, int flags) {
 
+        dest.writeBoolean(data != null);
         dest.writeInt(data.getValue());
     }
 

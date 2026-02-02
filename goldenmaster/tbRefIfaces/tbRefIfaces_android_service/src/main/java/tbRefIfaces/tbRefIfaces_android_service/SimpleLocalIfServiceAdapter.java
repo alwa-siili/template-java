@@ -194,6 +194,7 @@ public class SimpleLocalIfServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			SimpleLocalIfMessageType messageType = SimpleLocalIfMessageType.fromInteger(msg.what);
 			ISimpleLocalIf backend;
 			synchronized (SimpleLocalIfServiceAdapter.sBackendMutex)
 			{
@@ -201,14 +202,14 @@ public class SimpleLocalIfServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (SimpleLocalIfMessageType.fromInteger(msg.what) != SimpleLocalIfMessageType.REGISTER_CLIENT
-					&& SimpleLocalIfMessageType.fromInteger(msg.what) != SimpleLocalIfMessageType.UNREGISTER_CLIENT)
+				if (messageType != SimpleLocalIfMessageType.REGISTER_CLIENT
+					&& messageType != SimpleLocalIfMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SimpleLocalIfMessageType" + SimpleLocalIfMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SimpleLocalIfMessageType" + messageType);
 					return;
 				}
 			}
-			switch (SimpleLocalIfMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

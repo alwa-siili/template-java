@@ -194,6 +194,7 @@ public class NoSignalsInterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			NoSignalsInterfaceMessageType messageType = NoSignalsInterfaceMessageType.fromInteger(msg.what);
 			INoSignalsInterface backend;
 			synchronized (NoSignalsInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -201,14 +202,14 @@ public class NoSignalsInterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (NoSignalsInterfaceMessageType.fromInteger(msg.what) != NoSignalsInterfaceMessageType.REGISTER_CLIENT
-					&& NoSignalsInterfaceMessageType.fromInteger(msg.what) != NoSignalsInterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != NoSignalsInterfaceMessageType.REGISTER_CLIENT
+					&& messageType != NoSignalsInterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: NoSignalsInterfaceMessageType" + NoSignalsInterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: NoSignalsInterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (NoSignalsInterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

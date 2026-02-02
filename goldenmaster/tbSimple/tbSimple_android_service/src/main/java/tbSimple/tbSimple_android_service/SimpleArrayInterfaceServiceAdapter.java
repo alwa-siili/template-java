@@ -194,6 +194,7 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			SimpleArrayInterfaceMessageType messageType = SimpleArrayInterfaceMessageType.fromInteger(msg.what);
 			ISimpleArrayInterface backend;
 			synchronized (SimpleArrayInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -201,14 +202,14 @@ public class SimpleArrayInterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (SimpleArrayInterfaceMessageType.fromInteger(msg.what) != SimpleArrayInterfaceMessageType.REGISTER_CLIENT
-					&& SimpleArrayInterfaceMessageType.fromInteger(msg.what) != SimpleArrayInterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != SimpleArrayInterfaceMessageType.REGISTER_CLIENT
+					&& messageType != SimpleArrayInterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SimpleArrayInterfaceMessageType" + SimpleArrayInterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SimpleArrayInterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (SimpleArrayInterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

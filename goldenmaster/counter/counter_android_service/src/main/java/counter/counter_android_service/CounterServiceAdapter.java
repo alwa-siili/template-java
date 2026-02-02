@@ -194,6 +194,7 @@ public class CounterServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			CounterMessageType messageType = CounterMessageType.fromInteger(msg.what);
 			ICounter backend;
 			synchronized (CounterServiceAdapter.sBackendMutex)
 			{
@@ -201,14 +202,14 @@ public class CounterServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (CounterMessageType.fromInteger(msg.what) != CounterMessageType.REGISTER_CLIENT
-					&& CounterMessageType.fromInteger(msg.what) != CounterMessageType.UNREGISTER_CLIENT)
+				if (messageType != CounterMessageType.REGISTER_CLIENT
+					&& messageType != CounterMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: CounterMessageType" + CounterMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: CounterMessageType" + messageType);
 					return;
 				}
 			}
-			switch (CounterMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

@@ -194,6 +194,7 @@ public class SimpleInterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			SimpleInterfaceMessageType messageType = SimpleInterfaceMessageType.fromInteger(msg.what);
 			ISimpleInterface backend;
 			synchronized (SimpleInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -201,14 +202,14 @@ public class SimpleInterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (SimpleInterfaceMessageType.fromInteger(msg.what) != SimpleInterfaceMessageType.REGISTER_CLIENT
-					&& SimpleInterfaceMessageType.fromInteger(msg.what) != SimpleInterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != SimpleInterfaceMessageType.REGISTER_CLIENT
+					&& messageType != SimpleInterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SimpleInterfaceMessageType" + SimpleInterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SimpleInterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (SimpleInterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

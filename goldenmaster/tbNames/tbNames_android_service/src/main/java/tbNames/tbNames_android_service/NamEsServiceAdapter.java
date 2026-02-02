@@ -196,6 +196,7 @@ public class NamEsServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			NamEsMessageType messageType = NamEsMessageType.fromInteger(msg.what);
 			INamEs backend;
 			synchronized (NamEsServiceAdapter.sBackendMutex)
 			{
@@ -203,14 +204,14 @@ public class NamEsServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (NamEsMessageType.fromInteger(msg.what) != NamEsMessageType.REGISTER_CLIENT
-					&& NamEsMessageType.fromInteger(msg.what) != NamEsMessageType.UNREGISTER_CLIENT)
+				if (messageType != NamEsMessageType.REGISTER_CLIENT
+					&& messageType != NamEsMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: NamEsMessageType" + NamEsMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: NamEsMessageType" + messageType);
 					return;
 				}
 			}
-			switch (NamEsMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

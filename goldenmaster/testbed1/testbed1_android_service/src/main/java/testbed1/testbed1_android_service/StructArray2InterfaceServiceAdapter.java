@@ -214,6 +214,7 @@ public class StructArray2InterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			StructArray2InterfaceMessageType messageType = StructArray2InterfaceMessageType.fromInteger(msg.what);
 			IStructArray2Interface backend;
 			synchronized (StructArray2InterfaceServiceAdapter.sBackendMutex)
 			{
@@ -221,14 +222,14 @@ public class StructArray2InterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (StructArray2InterfaceMessageType.fromInteger(msg.what) != StructArray2InterfaceMessageType.REGISTER_CLIENT
-					&& StructArray2InterfaceMessageType.fromInteger(msg.what) != StructArray2InterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != StructArray2InterfaceMessageType.REGISTER_CLIENT
+					&& messageType != StructArray2InterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: StructArray2InterfaceMessageType" + StructArray2InterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: StructArray2InterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (StructArray2InterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

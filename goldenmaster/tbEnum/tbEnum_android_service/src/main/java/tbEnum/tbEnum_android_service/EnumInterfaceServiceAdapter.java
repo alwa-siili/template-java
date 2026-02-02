@@ -202,6 +202,7 @@ public class EnumInterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			EnumInterfaceMessageType messageType = EnumInterfaceMessageType.fromInteger(msg.what);
 			IEnumInterface backend;
 			synchronized (EnumInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -209,14 +210,14 @@ public class EnumInterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (EnumInterfaceMessageType.fromInteger(msg.what) != EnumInterfaceMessageType.REGISTER_CLIENT
-					&& EnumInterfaceMessageType.fromInteger(msg.what) != EnumInterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != EnumInterfaceMessageType.REGISTER_CLIENT
+					&& messageType != EnumInterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: EnumInterfaceMessageType" + EnumInterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: EnumInterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (EnumInterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

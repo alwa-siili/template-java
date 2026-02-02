@@ -196,6 +196,7 @@ public class SameStruct1InterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			SameStruct1InterfaceMessageType messageType = SameStruct1InterfaceMessageType.fromInteger(msg.what);
 			ISameStruct1Interface backend;
 			synchronized (SameStruct1InterfaceServiceAdapter.sBackendMutex)
 			{
@@ -203,14 +204,14 @@ public class SameStruct1InterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (SameStruct1InterfaceMessageType.fromInteger(msg.what) != SameStruct1InterfaceMessageType.REGISTER_CLIENT
-					&& SameStruct1InterfaceMessageType.fromInteger(msg.what) != SameStruct1InterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != SameStruct1InterfaceMessageType.REGISTER_CLIENT
+					&& messageType != SameStruct1InterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SameStruct1InterfaceMessageType" + SameStruct1InterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SameStruct1InterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (SameStruct1InterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

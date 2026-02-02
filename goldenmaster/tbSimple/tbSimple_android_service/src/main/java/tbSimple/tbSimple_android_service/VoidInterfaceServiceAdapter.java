@@ -194,6 +194,7 @@ public class VoidInterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			VoidInterfaceMessageType messageType = VoidInterfaceMessageType.fromInteger(msg.what);
 			IVoidInterface backend;
 			synchronized (VoidInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -201,14 +202,14 @@ public class VoidInterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (VoidInterfaceMessageType.fromInteger(msg.what) != VoidInterfaceMessageType.REGISTER_CLIENT
-					&& VoidInterfaceMessageType.fromInteger(msg.what) != VoidInterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != VoidInterfaceMessageType.REGISTER_CLIENT
+					&& messageType != VoidInterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: VoidInterfaceMessageType" + VoidInterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: VoidInterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (VoidInterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

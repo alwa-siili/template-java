@@ -194,6 +194,7 @@ public class ManyParamInterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			ManyParamInterfaceMessageType messageType = ManyParamInterfaceMessageType.fromInteger(msg.what);
 			IManyParamInterface backend;
 			synchronized (ManyParamInterfaceServiceAdapter.sBackendMutex)
 			{
@@ -201,14 +202,14 @@ public class ManyParamInterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (ManyParamInterfaceMessageType.fromInteger(msg.what) != ManyParamInterfaceMessageType.REGISTER_CLIENT
-					&& ManyParamInterfaceMessageType.fromInteger(msg.what) != ManyParamInterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != ManyParamInterfaceMessageType.REGISTER_CLIENT
+					&& messageType != ManyParamInterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: ManyParamInterfaceMessageType" + ManyParamInterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: ManyParamInterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (ManyParamInterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

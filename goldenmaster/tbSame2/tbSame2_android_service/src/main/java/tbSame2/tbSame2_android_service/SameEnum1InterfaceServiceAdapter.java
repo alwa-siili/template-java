@@ -196,6 +196,7 @@ public class SameEnum1InterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			SameEnum1InterfaceMessageType messageType = SameEnum1InterfaceMessageType.fromInteger(msg.what);
 			ISameEnum1Interface backend;
 			synchronized (SameEnum1InterfaceServiceAdapter.sBackendMutex)
 			{
@@ -203,14 +204,14 @@ public class SameEnum1InterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (SameEnum1InterfaceMessageType.fromInteger(msg.what) != SameEnum1InterfaceMessageType.REGISTER_CLIENT
-					&& SameEnum1InterfaceMessageType.fromInteger(msg.what) != SameEnum1InterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != SameEnum1InterfaceMessageType.REGISTER_CLIENT
+					&& messageType != SameEnum1InterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SameEnum1InterfaceMessageType" + SameEnum1InterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: SameEnum1InterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (SameEnum1InterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));

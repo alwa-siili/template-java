@@ -198,6 +198,7 @@ public class NestedStruct2InterfaceServiceAdapter extends Service
 		public void handleMessage(Message msg)
 		{
 			Log.i(TAG, "Handle msg " + msg);
+			NestedStruct2InterfaceMessageType messageType = NestedStruct2InterfaceMessageType.fromInteger(msg.what);
 			INestedStruct2Interface backend;
 			synchronized (NestedStruct2InterfaceServiceAdapter.sBackendMutex)
 			{
@@ -205,14 +206,14 @@ public class NestedStruct2InterfaceServiceAdapter extends Service
 			}
 			if (backend == null || !backend._isReady())
 			{
-				if (NestedStruct2InterfaceMessageType.fromInteger(msg.what) != NestedStruct2InterfaceMessageType.REGISTER_CLIENT
-					&& NestedStruct2InterfaceMessageType.fromInteger(msg.what) != NestedStruct2InterfaceMessageType.UNREGISTER_CLIENT)
+				if (messageType != NestedStruct2InterfaceMessageType.REGISTER_CLIENT
+					&& messageType != NestedStruct2InterfaceMessageType.UNREGISTER_CLIENT)
 				{
-					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: NestedStruct2InterfaceMessageType" + NestedStruct2InterfaceMessageType.fromInteger(msg.what) );
+					Log.w(TAG, "Check if server is ready, messsage will be dropped. MsgType: NestedStruct2InterfaceMessageType" + messageType);
 					return;
 				}
 			}
-			switch (NestedStruct2InterfaceMessageType.fromInteger(msg.what))
+			switch (messageType.fromInteger(msg.what))
 			{
 				case REGISTER_CLIENT:
 					addClientActivity(msg.replyTo, msg.getData().getString("connectionID", ""));
